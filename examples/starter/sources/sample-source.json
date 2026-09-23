@@ -1,0 +1,24 @@
+{
+  "schema_version": "source-packet/v1",
+  "id": "sample-001",
+  "kind": "field-note",
+  "title": "改用短檢查表後，審稿反而更具體",
+  "published_at": "2026-01-08T09:00:00Z",
+  "content": "我們原本用一張很長的評分表審稿，大家最後只會說分數差不多。改成先問『這篇要幫誰完成什麼判斷』，再分開檢查來源、推理和閱讀負擔後，回饋反而能指出要改哪一段。這只是三次內部試作的觀察，還不能說所有團隊都會得到相同結果。",
+  "context": "虛構的內部內容製作筆記，用於示範流程。",
+  "provenance": {
+    "locator": "example:sample-001",
+    "retrieved_at": "2026-01-09T00:00:00Z",
+    "completeness": "complete"
+  },
+  "public_boundary": [
+    "不得把三次試作寫成普遍成效",
+    "不得捏造參與者引言"
+  ],
+  "upstream_signals": {
+    "evidence_density": 0.6,
+    "deep_dive_seed": 0.8,
+    "digest_unit_fit": 0.7
+  }
+}
+

@@ -1,0 +1,33 @@
+{
+  "artifact": {
+    "id": "article-001-v1",
+    "content_type": "thematic_newsletter",
+    "content": "# 審稿表愈長，回饋不一定愈具體\n\n我們曾把審稿標準全部塞進同一張表，結果三次內部試作裡，回饋仍集中在相近的分數。改成先固定讀者任務，再分開看來源、推理與閱讀負擔後，討論比較容易落到要修改的段落。這個觀察的樣本很小，較適合當成下一輪流程設計的假設，而不是普遍結論。"
+  },
+  "assignment": {
+    "target_content_type": "thematic_newsletter",
+    "reader_task": "理解為何增加評分欄位不一定改善審稿，以及可以如何拆開判斷責任",
+    "content_promise": "用一個小型案例提出可驗證的流程設計假設",
+    "public_boundary": [
+      "不得捏造參與者引言",
+      "不得宣稱普遍成效"
+    ]
+  },
+  "sources": [
+    {
+      "locator": "example:sample-001",
+      "content": "我們原本用一張很長的評分表審稿，大家最後只會說分數差不多。改成先問『這篇要幫誰完成什麼判斷』，再分開檢查來源、推理和閱讀負擔後，回饋反而能指出要改哪一段。這只是三次內部試作的觀察，還不能說所有團隊都會得到相同結果。"
+    }
+  ],
+  "claim_source_map": [
+    {
+      "claim": "三次內部試作中，拆開判斷責任後，回饋較容易落到具體段落",
+      "source": "example:sample-001"
+    }
+  ],
+  "voice_reference": {
+    "language": "繁體中文",
+    "venue": "個人專業電子報",
+    "qualities": ["直接", "有第一人稱但不誇大", "保留限制"]
+  }
+}

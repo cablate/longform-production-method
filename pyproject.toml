@@ -1,0 +1,13 @@
+[project]
+name = "longform-production-method"
+version = "0.1.0"
+description = "A source-grounded method for producing newsletters and long-form writing with staged AI work and JEV quality gates"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "CabLate" }]
+dependencies = []
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
