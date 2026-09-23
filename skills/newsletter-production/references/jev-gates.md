@@ -6,17 +6,17 @@
 
 每次 Gate 只處理一個確切版本：
 
-1. AI 準備最小必要 JSON，包含稿件、內容類型、目前任務、該 Gate 必要的直接來源與公開邊界；runner 會再依 Gate allowlist 投影，未知的流程欄位不送入 JEV。
+1. AI 準備最小必要 JSON，包含稿件、內容類型、目前任務、該 Gate 必要的直接來源與公開邊界；腳本會再依 Gate allowlist 投影，未知的流程欄位不送入 JEV。
 2. 執行 `scripts/newsletter_gate_jev.py <gate> input.json --output receipt.json`。正式 chain 維持每個 Gate 一次獨立 request；批次 request 目前只留在校準工具，不能產生正式通過證據。
 3. 以每個 Gate 自己的 `receipt.outcome` 決定下一步；各原子答案全部保存，不挑最高單項當總評，也不讓同一 request 內其他 Gate 的結果互相抵銷。
 4. `revise`、`refactor` 或 `recreate_candidate` 時，AI 只依本 Gate 的低信號面向回讀原文並修改；JEV 不負責生成文字。
 5. 稿件、brief、來源或公開邊界改變後，舊 receipt 失效。
 
-JEV 是 Gate 權威，不再要求 fresh AI reviewer。fresh reviewer 只可用於開發期校準、調查異常結果或比較契約版本，不能覆蓋正式 JEV receipt。
+JEV 是正式 Gate 的判斷者。開發期案例比較可以幫助校準契約，但不能覆蓋正式 JEV Receipt。
 
 ## 七個固定 Gate
 
-完整產製固定執行 `brief`、`truth`、`depth`、`experience`、`fidelity`、`sepia` 與 `final`，沒有條件式全文潤稿分支。
+完整產製固定執行 `brief`、`truth`、`depth`、`experience`、`fidelity`、`prose` 與 `final`，沒有額外的全文潤稿分支。
 
 | Gate | 使用時機 | 主要檢查 | 合法結果 |
 |---|---|---|---|
@@ -25,7 +25,7 @@ JEV 是 Gate 權威，不再要求 fresh AI reviewer。fresh reviewer 只可用�
 | `depth` | truth 通過後 | 承諾完成、來源容量、推理、路線特有價值、轉用邊界 | `pass`、`revise`、`recover_sources` |
 | `experience` | depth 通過後 | 自然進入文章、背景、中斷承接、略讀路徑、必要術語、外部依賴與讀者自主 | `pass`、`revise` |
 | `fidelity` | experience 通過後 | 作者主體、立場、第一人稱、敏感與重複 | `pass`、`revise`、`recover_sources`、`author_only` |
-| `sepia` | 專案提供的 voice reference、文字後製方法與語言場域 | 套版、重複、句群與段落節奏、場域與聲音 | `pass`、`refactor`、`recreate_candidate` |
+| `prose` | 目前版本、專案提供的 voice reference 與語言場域 | 套版、重複、句群與段落節奏、場域與聲音 | `pass`、`refactor`、`recreate_candidate` |
 | `final` | 交作者前 | 確切版本、內外邊界、包裝一致、資產可用 | `pass`、`revise`、`author_only` |
 
 ## 輸入契約
@@ -35,7 +35,7 @@ JEV 是 Gate 權威，不再要求 fresh AI reviewer。fresh reviewer 只可用�
 ```json
 {
   "artifact": {
-    "id": "weekly-2026-09-13--2026-09-20-v1",
+    "id": "weekly-example-v1",
     "content_type": "weekly_compilation",
     "content": "完整待審文字"
   },
@@ -45,21 +45,21 @@ JEV 是 Gate 權威，不再要求 fresh AI reviewer。fresh reviewer 只可用�
     "public_boundary": ["不可公開或不可外推的範圍"]
   },
   "sources": [
-    {"locator": "threads_post:...", "content": "實際支持內容"}
+    {"locator": "source:example-001", "content": "實際支持內容"}
   ],
   "claim_source_map": [
     {
       "claim": "brief 中的一項承重主張",
       "support_kind": "direct 或 derived_from_multiple_direct_sources",
-      "source_locators": ["threads_post:..."]
+      "source_locators": ["source:example-001"]
     }
   ]
 }
 ```
 
-不要只送摘要。`assignment.target_content_type` 或 brief 本身必須讓 JEV 辨認這篇是深入文章、既有內容編選、短札記、通知、策展或其他路線；不能只寫「高品質文章」。`brief` 應為承重主張附上 `claim_source_map`，並區分直接支持與跨來源推導；同一張表必須一路帶進 `truth`、`depth` 與 `fidelity`。多主題週報尤其不能只給一大包來源，否則 Gate 必須重新猜測每個單元的支持關係。這三關同時必須包含足以核對的原文；`experience` 可另帶主旨、預覽與必要交付資訊，以檢查略讀路徑；`sepia` 必須包含目前版本及可用的作者聲音依據；`final` 必須包含待交付的確切內容與必要資產／連結清單。
+不要只送摘要。`assignment.target_content_type` 或 brief 本身必須讓 JEV 辨認這篇是深入文章、既有內容編選、短札記、通知、策展或其他路線；不能只寫「高品質文章」。`brief` 應為承重主張附上 `claim_source_map`，並區分直接支持與跨來源推導；同一張表必須一路帶進 `truth`、`depth` 與 `fidelity`。多主題週報尤其不能只給一大包來源，否則 Gate 必須重新猜測每個單元的支持關係。這三關同時必須包含足以核對的原文；`experience` 可另帶主旨、預覽與必要交付資訊，以檢查略讀路徑；`prose` 必須包含目前版本及可用的作者聲音依據；`final` 必須包含待交付的確切內容與必要資產／連結清單。
 
-完整 chain 預設執行七次獨立 request：`brief`、`truth`、`depth`、`experience`、`fidelity`、`sepia`、`final`。任一 Gate 不通過，AI 只按該 Gate 修稿；稿件一改，所有綁定舊 artifact identity 的內容 Gate receipts 都失效，再從受影響的最早 Gate 重跑。批次實驗雖通過固定 reference／contrast，卻在第二篇真稿改變 depth 與 fidelity 的正式結果，因此不得為省 token 啟用，也不得降低 Gate 要求。
+完整 chain 預設執行七次獨立 request：`brief`、`truth`、`depth`、`experience`、`fidelity`、`prose`、`final`。任一 Gate 不通過，AI 只按該 Gate 修稿；稿件一改，所有綁定舊 artifact identity 的內容 Gate Receipts 都失效，再從受影響的最早 Gate 重跑。若要批次呼叫，只能合併共用輸入的請求，不得合併判斷、平均結果或降低 Gate 要求。
 
 ## 回修規則
 
@@ -89,4 +89,4 @@ Gate prompt 的「訓練」是版本化校準，不是修改模型權重：
 
 批次 request 除了上述單關案例，還要驗證：reference bundle 內所有 Gate 都通過；每個針對性 contrast 至少被它所針對的 Gate 攔下；回傳缺少任何 prefixed question、錯型別或未知 choice 時整個 bundle 無效。相鄰 Gate 也可能因同一個真缺陷而合理失敗，這不算互相污染；真正禁止的是某 Gate 因其他 Gate 表現良好而通過。
 
-專案的 `scripts/calibrate_newsletter_gates.py` 會產生七個 Gate 的固定案例與 receipts。它是開發工具，不取代正式產製時逐稿執行 `newsletter_gate_jev.py`。
+契約變更後先執行 `python -m unittest discover -s tests -v`，再用 `examples/starter/article-state.json` 對受影響 Gate 執行 `--dry-run`。這只證明 payload 與本地契約成立，不取代正式產製時逐稿執行 `newsletter_gate_jev.py`，也不證明內容品質或作者接受。

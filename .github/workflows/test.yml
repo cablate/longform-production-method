@@ -19,4 +19,4 @@ jobs:
       - run: python scripts/validate_workspace.py examples/starter --allow-placeholders
       - run: python skills/newsletter-production/scripts/topic_selection_jev.py viability examples/starter/selection-inputs/viability.json --dry-run > /dev/null
       - run: python skills/newsletter-production/scripts/newsletter_gate_jev.py truth examples/starter/gate-inputs/article-state.json --dry-run > /dev/null
-
+      - run: python skills/newsletter-production/scripts/newsletter_gate_jev.py prose examples/starter/gate-inputs/article-state.json --dry-run > /dev/null

@@ -1,6 +1,6 @@
 # Longform Production Method
 
-一套把零散真實素材發展成週報、電子報與其他長文作品的方法。
+一套把零散真實素材發展成週報、電子報與其他長文作品的方法，以及一份可執行的最小參考實作。
 
 它處理的不是「叫 AI 寫長一點」，而是三個更難的問題：
 
@@ -8,11 +8,11 @@
 - 每個題目適合成為週報單元、主題長文、短札記，還是先留在庫存？
 - AI 寫出的文章，如何經過可追溯的分段檢查，而不是靠同一個模型說自己寫得很好？
 
-本方法把工作分給三種角色：AI 負責理解、組合、寫作與定點回修；TypeSafe JEV 負責事先定義的有限品質判斷；作者或責任編輯保留立場、公開邊界、優先順序與最終核准。
+本方法把工作分給三種角色：AI 負責理解、組合、寫作與定點回修；TypeSafe JEV 負責事先定義的有限品質判斷；作者或責任編輯保留立場、公開邊界、優先順序與最終核准。Repo 內的 Python 腳本只實作資料契約、JEV 呼叫與 Receipt，不替代內容判斷。
 
 它不是內容平台整合包，也不是通用工作流引擎。來源的原始格式與取得工具由使用者自行決定；本方法只規定進入選題時必須具備的素材、上下文與來源定位。
 
-## 使用者只需提供三件事
+## 你需要提供三件事
 
 1. **素材來源**：這批內容從哪裡來、範圍到哪裡、哪些可以公開。
 2. **取得方式**：如何取得完整內容並整理成可追溯的來源包。
@@ -56,7 +56,7 @@ Assignment
 → Depth
 → Experience
 → Fidelity
-→ Sepia
+→ Prose
 → Final
 → 作者核准
 ```
@@ -70,7 +70,7 @@ Assignment
 | Depth | 文章承諾、來源容量、推理、路線特有價值與適用邊界 |
 | Experience | 入口、背景、導航、略讀路徑、術語負擔與讀者自主 |
 | Fidelity | 作者主體、立場、第一人稱、敏感內容與是否只是換字改寫 |
-| Sepia | 套版、重複、句群、段落節奏、場域與作者聲音 |
+| Prose | 套版、重複、句群、段落節奏、場域與作者聲音 |
 | Final | 確切版本、前置 Receipt、交付包與幕後資料外漏 |
 
 Gate 失敗時，AI 只修改受影響的位置，再用新內容重跑同一關。來源錯誤不能被好讀抵銷，內容空洞也不能用自然語氣掩蓋。
@@ -121,16 +121,28 @@ python skills/newsletter-production/scripts/topic_selection_jev.py viability inp
 python skills/newsletter-production/scripts/newsletter_gate_jev.py truth article-state.json --output receipt.json
 
 # 不呼叫 API，只檢查 payload
-python skills/newsletter-production/scripts/newsletter_gate_jev.py truth article-state.json --dry-run
+python skills/newsletter-production/scripts/newsletter_gate_jev.py truth examples/starter/gate-inputs/article-state.json --dry-run
+
+# 檢查起始工作區與私人資料邊界
+python scripts/validate_workspace.py examples/starter --allow-placeholders
 ```
 
 `examples/starter/` 提供完全虛構的來源包、候選輸入與文章 Gate 輸入。範例不是品質黃金答案；低信心或暫緩結果同樣是應保留的有效訊號。
+
+## 怎麼讀這個 Repository
+
+- 想先理解方法：讀[方法總覽](docs/method.md)。
+- 要準備自己的素材：讀[來源契約](docs/source-contract.md)，再複製 `examples/starter/`。
+- 要讓 Agent 正式執行：以 `skills/newsletter-production/SKILL.md` 為唯一方法入口。
+- 要調整判斷：讀[JEV Gates](docs/gates.md)與其指向的正式契約。
+
+讀者文件負責說明；Skill 與它直接引用的 references 才是執行依據，避免兩套規則各自演進。
 
 ## Repository 內容
 
 ```text
 skills/newsletter-production/   Agent Skill、完整方法與 JEV 判斷腳本
-docs/                           方法全貌、來源契約與 Gate 說明
+docs/                           給使用者閱讀的方法、來源與 Gate 導覽
 schemas/                        來源包公開格式
 examples/starter/               不含私人內容的起始工作區
 scripts/                        建立與驗證工作區
@@ -145,9 +157,8 @@ tests/                          不呼叫外部 API 的契約測試
 - Gate 通過最多表示可以交作者審閱，不等於作者核准或已發布。
 - 不自動寄送、不自動公開，也不把 API Key 寫入 Repository。
 
-深入閱讀：[完整方法](docs/workflow.md) · [來源契約](docs/source-contract.md) · [JEV Gates](docs/gates.md)
+深入閱讀：[方法總覽](docs/method.md) · [來源契約](docs/source-contract.md) · [JEV Gates](docs/gates.md)
 
 ## License
 
 [MIT](LICENSE)
-

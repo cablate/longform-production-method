@@ -1,4 +1,6 @@
-# JEV Gates
+# JEV Gates 導覽
+
+這裡說明各 Gate 的責任。正式問題、合法結果、輸入投影與 Receipt 規則，以 [`jev-gates.md`](../skills/newsletter-production/references/jev-gates.md) 和 [`newsletter_gate_jev.py`](../skills/newsletter-production/scripts/newsletter_gate_jev.py) 為準。
 
 本 Repo 使用 TypeSafe JEV 提供結構化語意判斷。所有 API 呼叫遵循目前官方 `POST https://api.typesafe.ai/v1/systemone` 契約；Key 由 `TYPESAFE_API_KEY` 提供。
 
@@ -14,9 +16,8 @@
 
 ## 文章 Gate
 
-`brief → truth → depth → experience → fidelity → sepia → final`
+`brief → truth → depth → experience → fidelity → prose → final`
 
 每一關只收到判斷所需的最小 state projection。好讀不能抵銷事實錯誤，語氣自然也不能抵銷內容空洞。`final` 只接受綁定目前正文 identity 的前置 Receipt。
 
 Noul 的機率接近 0.5 表示 yes/no 不確定，不是「中等程度」。Choice 的 confidence 描述機率分布集中程度，也不代表整個流程正確。門檻必須用自己的案例持續校準；Repo 內門檻是已使用過的預設值，不是所有領域的永久真理。
-

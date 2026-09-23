@@ -49,10 +49,10 @@ class NewsletterGateJevTests(unittest.TestCase):
     def test_bundle_keeps_gate_decisions_independent(self):
         payload = jev.build_bundle_payload("reader_voice", self.state, "jev-latest")
         self.assertIn("experience__disposition", payload["questions"])
-        self.assertIn("sepia__disposition", payload["questions"])
+        self.assertIn("prose__disposition", payload["questions"])
         self.assertNotIn("sources", payload["state"])
         self.assertIn("不得與其他 Gate 平均或互相抵銷",
-                      payload["questions"]["sepia__disposition"]["instructions"])
+                      payload["questions"]["prose__disposition"]["instructions"])
 
     def test_bundle_response_splits_without_duplicate_usage(self):
         answers = {}
@@ -65,7 +65,7 @@ class NewsletterGateJevTests(unittest.TestCase):
         response = {"model": "jev-test", "usage": {"input_tokens": 10},
                     "answers": answers}
         jev.validate_bundle_response("reader_voice", response)
-        split = jev.split_bundle_response("reader_voice", response, "sepia")
+        split = jev.split_bundle_response("reader_voice", response, "prose")
         self.assertIsNone(split["usage"])
         self.assertEqual(split["answers"]["disposition"]["choice"], "pass")
 
@@ -95,7 +95,7 @@ class NewsletterGateJevTests(unittest.TestCase):
         self.assertNotIn("state_snapshot", receipt)
 
     def test_pass_with_failed_required_dimension_routes_to_repair(self):
-        payload = jev.build_payload("sepia", self.state, "jev-latest")
+        payload = jev.build_payload("prose", self.state, "jev-latest")
         response = {
             "model": "jev-test",
             "answers": {
@@ -108,8 +108,8 @@ class NewsletterGateJevTests(unittest.TestCase):
             },
         }
         receipt = jev.build_receipt(
-            "sepia", self.state, payload,
-            jev.validate_response("sepia", response), "candidate.md")
+            "prose", self.state, payload,
+            jev.validate_response("prose", response), "candidate.md")
         self.assertEqual(receipt["jev_outcome"], "pass")
         self.assertEqual(receipt["outcome"], "refactor")
         self.assertEqual(receipt["failed_dimensions"], ["repetition_controlled"])
@@ -159,7 +159,7 @@ class NewsletterGateJevTests(unittest.TestCase):
                 self.assertEqual(receipt["required_floors"][target], floor)
 
     def test_exactly_uncertain_required_dimension_does_not_pass(self):
-        payload = jev.build_payload("sepia", self.state, "jev-latest")
+        payload = jev.build_payload("prose", self.state, "jev-latest")
         response = {
             "model": "jev-test",
             "answers": {
@@ -172,8 +172,8 @@ class NewsletterGateJevTests(unittest.TestCase):
             },
         }
         receipt = jev.build_receipt(
-            "sepia", self.state, payload,
-            jev.validate_response("sepia", response), "candidate.md")
+            "prose", self.state, payload,
+            jev.validate_response("prose", response), "candidate.md")
         self.assertEqual(receipt["outcome"], "refactor")
         self.assertEqual(receipt["failed_dimensions"], ["repetition_controlled"])
 

@@ -24,12 +24,12 @@ from urllib.request import Request, urlopen
 
 ENDPOINT = "https://api.typesafe.ai/v1/systemone"
 DEFAULT_MODEL = "jev-latest"
-CONTRACT_VERSION = "newsletter-topic-selection-jev/v4"
+CONTRACT_VERSION = "newsletter-topic-selection-jev/v5"
 OUTCOME_POLICY_VERSION = "newsletter-topic-selection-jev/outcome-policy/v1"
 DECISION_CONTRACT_VERSIONS = {
     "viability": "newsletter-topic-selection-jev/viability/v1",
     "relationship": "newsletter-topic-selection-jev/relationship/v1",
-    "destinations": "newsletter-topic-selection-jev/format-readiness/v1",
+    "destinations": "newsletter-topic-selection-jev/format-readiness/v2",
     "gap_route": "newsletter-topic-selection-jev/gap-route/v0",
     "plan_review": "newsletter-topic-selection-jev/plan-review/v2",
 }
@@ -146,7 +146,7 @@ def _destination_questions() -> dict[str, Any]:
             "type": "noul",
             "instructions": (
                 "根據候選的全部來源、可用的上游分析訊號、庫存關係與缺口，"
-                "候選目前是否具備成為短札記或 Threads 的內容條件？"
+                "候選目前是否具備成為短札記或社群短文的內容條件？"
                 "這不是本輪排程或優先級判斷。"),
             "criteria": {
                 "true": "有一個無須大量前情也能成立的核心觀察",

@@ -16,7 +16,7 @@ from urllib.request import Request, urlopen
 
 ENDPOINT = "https://api.typesafe.ai/v1/systemone"
 DEFAULT_MODEL = "jev-latest"
-CONTRACT_VERSION = "newsletter-jev-gates/v17"
+CONTRACT_VERSION = "newsletter-jev-gates/v18"
 OUTCOME_POLICY_VERSION = "newsletter-jev-gate-outcome-policy/v5"
 STATE_PROJECTION_VERSION = "newsletter-jev-state-projection/v1"
 PASS_FLOOR = 0.5
@@ -42,11 +42,11 @@ REPAIR_OUTCOME = {
     "depth": "revise",
     "experience": "revise",
     "fidelity": "revise",
-    "sepia": "refactor",
+    "prose": "refactor",
     "final": "revise",
 }
 
-STANDARD_GATES = ("brief", "truth", "depth", "experience", "fidelity", "sepia")
+STANDARD_GATES = ("brief", "truth", "depth", "experience", "fidelity", "prose")
 
 # A Gate sees only the evidence needed for its own decision.  This prevents a
 # generic state object from silently increasing cost or influencing a judge
@@ -58,7 +58,7 @@ GATE_STATE_KEYS: dict[str, tuple[str, ...]] = {
     "depth": ("artifact", "assignment", "sources", "claim_source_map"),
     "experience": ("artifact", "assignment", "delivery_package"),
     "fidelity": ("artifact", "assignment", "sources", "claim_source_map"),
-    "sepia": ("artifact", "assignment", "voice_reference", "sepia_process"),
+    "prose": ("artifact", "assignment", "voice_reference", "prose_process"),
     "final": ("artifact", "assignment", "current_artifact_identity",
               "delivery_package", "brief_receipt", "prior_gate_receipts",
               "version_binding"),
@@ -69,7 +69,7 @@ GATE_STATE_KEYS: dict[str, tuple[str, ...]] = {
 # not a merged score.
 GATE_BUNDLES: dict[str, tuple[str, ...]] = {
     "evidence": ("truth", "depth", "fidelity"),
-    "reader_voice": ("experience", "sepia"),
+    "reader_voice": ("experience", "prose"),
 }
 
 
@@ -165,15 +165,15 @@ GATES: dict[str, dict[str, Any]] = {
             }),
         },
     },
-    "sepia": {
-        "version": "newsletter-jev-gate/sepia/v3",
+    "prose": {
+        "version": "newsletter-jev-gate/prose/v1",
         "questions": {
             "structure_natural": _noul("文章是否避免可預測、過度工整或同模板換題目的結構？"),
             "repetition_controlled": _noul("是否避免在沒有新增證據或推理時反覆總結、連續使用『不是 A 而是 B／不只是 A 更是 B』、或在段尾替讀者重複下結論？有明確修辭功能且只出現一次的回環不算缺陷。"),
             "rhythm_natural": _noul("句群、段落、轉折與語氣是否有符合內容的自然變化，而不是連續用短句與句號製造刻意節拍，也不是把每句獨立成段或把所有句子拉成同樣長？"),
             "paragraph_rhythm_balanced": _noul("同一個意思裡的原因、轉折、補充與例子，是否能在適當處連成可呼吸的段落；需要停頓時才斷句或分段？本項不要求長句，也不要求一段一句，而是判斷長短句與段落邊界是否服務理解。"),
             "venue_and_voice_fit": _noul("文字是否符合 assignment 指定的發表場域，以及 voice_reference 提供的作者聲音依據，而非中性報告腔或模型自行想像的語氣？"),
-            "disposition": _choice("決定 Sepia 後製下一步；不得以刪短必要內容換取自然感。", {
+            "disposition": _choice("決定文字與聲音後製的下一步；不得以刪短必要內容換取自然感。", {
                 "pass": "沒有需要處理的實質 AI 味或場域失真",
                 "refactor": "主線成立，只需局部後製並保存原意",
                 "recreate_candidate": "作者主體、內容容量或全文節奏已結構性失真，另建候選而不覆蓋原稿",
@@ -183,8 +183,8 @@ GATES: dict[str, dict[str, Any]] = {
     "final": {
         "version": "newsletter-jev-gate/final/v6",
         "questions": {
-            "exact_version_ready": _noul("依 version_binding 檢查：待交付內容是否是目前確切版本，且 truth、depth、experience、fidelity、sepia receipts 都綁定此版本？brief receipt 本來綁定 production brief，不應因其 artifact identity 與正文不同而判失敗。"),
-            "internal_boundary_clean": _noul("只檢查 artifact.content，不把 Gate input 中本來就存在的 receipts、assignment、version_binding 或其他審查資料算成正文外漏。正文是否沒有提示詞、blocker、receipt、審查狀態、待辦、敏感欄位，或『本篇如何經過 Fidelity／Depth／Sepia』等自身幕後製作紀錄？若文章主題本來就在談 JEV、Gate、Skill、workflow 或內容流程，為了說明普遍方法而出現這些詞並不算外漏；要攔的是把這一篇的實際內部產製與審查狀態直接寫給讀者。"),
+            "exact_version_ready": _noul("依 version_binding 檢查：待交付內容是否是目前確切版本，且 truth、depth、experience、fidelity、prose receipts 都綁定此版本？brief receipt 本來綁定 production brief，不應因其 artifact identity 與正文不同而判失敗。"),
+            "internal_boundary_clean": _noul("只檢查 artifact.content，不把 Gate input 中本來就存在的 receipts、assignment、version_binding 或其他審查資料算成正文外漏。正文是否沒有提示詞、blocker、receipt、審查狀態、待辦、敏感欄位，或『本篇如何經過 Fidelity／Depth／Prose』等自身幕後製作紀錄？若文章主題本來就在談 JEV、Gate、Skill、method 或內容流程，為了說明普遍方法而出現這些詞並不算外漏；要攔的是把這一篇的實際內部產製與審查狀態直接寫給讀者。"),
             "package_consistent": _noul("主旨、預覽、正文與交付說明是否一致且沒有過度承諾？"),
             "assets_ready": _noul("assignment／delivery package 宣告為必要的連結、圖片、格式與正文邊界是否存在且可用？明確宣告不需要的資產，其缺席視為 ready；未說明是否必要則不能直接推定 ready。"),
             "disposition": _choice("決定是否可把確切版本交作者審閱；pass 不等於作者核准或寄送。", {
@@ -457,7 +457,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="以 TypeSafe JEV 執行電子報品質 Gate")
     parser.add_argument("gate", choices=tuple(GATES))
     parser.add_argument(
-        "input", help="Gate input JSON；experience／sepia 可直接給稿件；使用 - 從 stdin 讀 JSON")
+        "input", help="Gate input JSON；experience／prose 可直接給稿件；使用 - 從 stdin 讀 JSON")
     parser.add_argument("--output", help="Receipt JSON 路徑；省略時輸出 stdout")
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--timeout", type=float, default=60.0)
@@ -470,7 +470,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     try:
         state = load_state(args.input)
-        if state.get("input_note") and args.gate not in {"experience", "sepia"}:
+        if state.get("input_note") and args.gate not in {"experience", "prose"}:
             raise ValueError(
                 f"{args.gate} Gate 需要含 assignment、sources 與 artifact 的完整 JSON input")
         payload = build_payload(args.gate, state, args.model)

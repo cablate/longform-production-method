@@ -27,7 +27,7 @@ class TopicSelectionJevTests(unittest.TestCase):
 
     def test_plan_review_is_a_bounded_jev_gate(self):
         payload = jev.build_payload("plan_review", {
-            "period": {"start": "2026-09-14", "end": "2026-09-20"},
+            "period": {"start": "2026-01-01", "end": "2026-01-07"},
             "candidates": [{"id": "TS-1"}],
             "plan": {"weekly": ["TS-1"]},
             "capacity": {"max_outputs": 1},
@@ -43,7 +43,7 @@ class TopicSelectionJevTests(unittest.TestCase):
     def test_plan_review_accepts_selection_run_shape(self):
         projected = jev.decision_state("plan_review", {
             "run_id": "RUN-1",
-            "period": {"start": "2026-09-14", "end": "2026-09-20"},
+            "period": {"start": "2026-01-01", "end": "2026-01-07"},
             "candidate_ids": ["TS-1"],
             "allocation": {"weekly": ["TS-1"]},
             "production_intent": {"weekly": "start"},
@@ -76,10 +76,10 @@ class TopicSelectionJevTests(unittest.TestCase):
         self.assertIn("不得", questions["assessment_status"]["instructions"])
 
     def test_contract_versions_mark_upstream_aware_destination_semantics(self):
-        self.assertEqual(jev.CONTRACT_VERSION, "newsletter-topic-selection-jev/v4")
+        self.assertEqual(jev.CONTRACT_VERSION, "newsletter-topic-selection-jev/v5")
         self.assertEqual(
             jev.DECISION_CONTRACT_VERSIONS["destinations"],
-            "newsletter-topic-selection-jev/format-readiness/v1",
+            "newsletter-topic-selection-jev/format-readiness/v2",
         )
 
     def test_decision_projection_uses_signals_without_preanswered_routes(self):
